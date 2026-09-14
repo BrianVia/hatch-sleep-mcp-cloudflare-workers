@@ -1,4 +1,4 @@
-# hatch-mcp
+# hatch-sleep-mcp-cloudflare-workers
 
 A remote [Model Context Protocol](https://modelcontextprotocol.io/) server for one Hatch account, hosted on Cloudflare Workers. It reads and controls supported Hatch Rest sound machines over their unofficial REST and AWS IoT interfaces.
 
