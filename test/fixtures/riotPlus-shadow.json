@@ -1,0 +1,608 @@
+{
+ "state": {
+  "desired": {
+   "owned": true,
+   "timezone": "America/New_York",
+   "env": "prod",
+   "logging": 53,
+   "clock": {
+    "flags": 0,
+    "i": 16383,
+    "turnOffMode": "never",
+    "turnOffAt": "22:00:00",
+    "turnOnAt": "07:00:00"
+   },
+   "current": {
+    "color": {
+     "i": 7864,
+     "id": 9999,
+     "r": 65535,
+     "g": 30352,
+     "b": 0,
+     "w": 0,
+     "duration": 47999,
+     "until": "duration"
+    },
+    "sound": {
+     "v": 22937,
+     "id": 10138,
+     "mute": false,
+     "url": "https://assets.ctfassets.net/hlsdh3zwyrtx/3R5xnLn3hFpC6LGyDemp2U/15bab94907d16d34aaf5ce3cf5f27624/Crashing_Ocean_Waves_20210412.wav",
+     "duration": 47999,
+     "until": "duration"
+    },
+    "srId": 224934191,
+    "playing": "routine",
+    "step": 1
+   },
+   "nightlightOn": false,
+   "snoozeDuration": 540,
+   "sleepScene": {
+    "enabled": false
+   },
+   "timer": {
+    "s": "2026-05-06 19:37:14",
+    "d": 0
+   },
+   "rF": {
+    "i": true,
+    "u": "https://firmware.hatchbaby.com/prod/riotPlus/riotPlus_DFU_7_1_639.bin?f=g",
+    "v": "7.1.639"
+   },
+   "LWTP": false,
+   "toddlerLock": {
+    "turnOffAt": "07:00:00",
+    "turnOnAt": "19:00:00",
+    "turnOnMode": "never"
+   },
+   "lucky": 17279,
+   "nightlightIntensity": 31468
+  },
+  "reported": {
+   "env": "prod",
+   "alarmsDisabled": false,
+   "nightlightOn": false,
+   "nightlightIntensity": 31468,
+   "toddlerLockOn": false,
+   "snoozeDuration": 540,
+   "current": {
+    "srId": 224934191,
+    "playing": "routine",
+    "step": 1,
+    "color": {
+     "id": 9999,
+     "r": 65535,
+     "g": 30352,
+     "b": 0,
+     "w": 0,
+     "i": 7864,
+     "duration": 47999,
+     "until": "duration"
+    },
+    "sound": {
+     "id": 10138,
+     "v": 22937,
+     "mute": false,
+     "url": "https://assets.ctfassets.net/hlsdh3zwyrtx/3R5xnLn3hFpC6LGyDemp2U/15bab94907d16d34aaf5ce3cf5f27624/Crashing_Ocean_Waves_20210412.wav",
+     "duration": 47999,
+     "until": "duration"
+    },
+    "paused": false,
+    "apparentStartTime": 1789343100,
+    "pausedAt": 0
+   },
+   "dataVersion": "20260906131607809",
+   "sleepScene": {
+    "srId": 0,
+    "enabled": false
+   },
+   "timer": {
+    "s": "2026-05-06 19:37:14",
+    "d": 0
+   },
+   "streaming": {
+    "status": "none"
+   },
+   "timezone": "America/New_York",
+   "rF": {
+    "v": "7.1.639",
+    "i": true,
+    "u": "https://firmware.hatchbaby.com/prod/riotPlus/riotPlus_DFU_7_1_639.bin?f=g"
+   },
+   "deviceInfo": {
+    "b": 45,
+    "f": "7.1.639",
+    "fR": 0,
+    "hwVersion": "8.0.2",
+    "powerStatus": 0,
+    "sdCardVersionInfo": {
+     "releaseDate": "04-12-2021",
+     "hashType": "md5",
+     "hashCode": "0x962e5ca1455279c62b126a26bc0e9a06"
+    }
+   },
+   "clock": {
+    "i": 16383,
+    "turnOffAt": "22:00:00",
+    "turnOnAt": "07:00:00",
+    "flags": 0,
+    "turnOffMode": "never",
+    "turnDimAt": "22:00:00",
+    "turnBrightAt": "07:00:00"
+   },
+   "toddlerLock": {
+    "turnOffAt": "07:00:00",
+    "turnOnAt": "19:00:00",
+    "turnOnMode": "never"
+   },
+   "lucky": 17279,
+   "LDR": "RECV_FAIL",
+   "LWTP": false,
+   "debug": 0,
+   "logging": 53,
+   "owned": true,
+   "lastReset": "ResetButt_OtherWDT",
+   "ota": {
+    "status": "none",
+    "downloadProgress": 0,
+    "installProgress": 0
+   },
+   "REX": {
+    "lock": 2470694898,
+    "key": 0,
+    "command": "none",
+    "auth": 1865200779
+   },
+   "connected": true,
+   "rssi": -52,
+   "hwDebugFlags": 0,
+   "snooze": {
+    "active": false,
+    "startTime": ""
+   },
+   "touch": {
+    "flags": 0,
+    "poll_rate_hz": 0,
+    "refire_delay_ms": 0,
+    "refire_rate_hz": 0,
+    "step_size": 0
+   },
+   "nightlightColor": {
+    "r": 0,
+    "g": 0,
+    "b": 0,
+    "w": 65535,
+    "id": 0
+   },
+   "deviceDistance": 6.67
+  }
+ },
+ "metadata": {
+  "desired": {
+   "owned": {
+    "timestamp": 1698107298
+   },
+   "timezone": {
+    "timestamp": 1789083732
+   },
+   "env": {
+    "timestamp": 1698107298
+   },
+   "logging": {
+    "timestamp": 1707062159
+   },
+   "clock": {
+    "flags": {
+     "timestamp": 1789083732
+    },
+    "i": {
+     "timestamp": 1789083732
+    },
+    "turnOffMode": {
+     "timestamp": 1789083732
+    },
+    "turnOffAt": {
+     "timestamp": 1789083732
+    },
+    "turnOnAt": {
+     "timestamp": 1789083732
+    }
+   },
+   "current": {
+    "color": {
+     "i": {
+      "timestamp": 1789344769
+     },
+     "id": {
+      "timestamp": 1789344745
+     },
+     "r": {
+      "timestamp": 1789344745
+     },
+     "g": {
+      "timestamp": 1789344745
+     },
+     "b": {
+      "timestamp": 1789344745
+     },
+     "w": {
+      "timestamp": 1789344745
+     },
+     "duration": {
+      "timestamp": 1789344745
+     },
+     "until": {
+      "timestamp": 1789344745
+     }
+    },
+    "sound": {
+     "v": {
+      "timestamp": 1789344745
+     },
+     "id": {
+      "timestamp": 1789344745
+     },
+     "mute": {
+      "timestamp": 1789344745
+     },
+     "url": {
+      "timestamp": 1789344745
+     },
+     "duration": {
+      "timestamp": 1789344745
+     },
+     "until": {
+      "timestamp": 1789344745
+     }
+    },
+    "srId": {
+     "timestamp": 1789344745
+    },
+    "playing": {
+     "timestamp": 1789344745
+    },
+    "step": {
+     "timestamp": 1789344745
+    }
+   },
+   "nightlightOn": {
+    "timestamp": 1789344745
+   },
+   "snoozeDuration": {
+    "timestamp": 1789083732
+   },
+   "sleepScene": {
+    "enabled": {
+     "timestamp": 1789344745
+    }
+   },
+   "timer": {
+    "s": {
+     "timestamp": 1789083732
+    },
+    "d": {
+     "timestamp": 1789344745
+    }
+   },
+   "rF": {
+    "i": {
+     "timestamp": 1789083732
+    },
+    "u": {
+     "timestamp": 1789083732
+    },
+    "v": {
+     "timestamp": 1789083732
+    }
+   },
+   "LWTP": {
+    "timestamp": 1789282467
+   },
+   "toddlerLock": {
+    "turnOffAt": {
+     "timestamp": 1789083732
+    },
+    "turnOnAt": {
+     "timestamp": 1789083732
+    },
+    "turnOnMode": {
+     "timestamp": 1789083732
+    }
+   },
+   "lucky": {
+    "timestamp": 1789083732
+   },
+   "nightlightIntensity": {
+    "timestamp": 1789344745
+   }
+  },
+  "reported": {
+   "env": {
+    "timestamp": 1789344745
+   },
+   "alarmsDisabled": {
+    "timestamp": 1789344738
+   },
+   "nightlightOn": {
+    "timestamp": 1789344738
+   },
+   "nightlightIntensity": {
+    "timestamp": 1789344738
+   },
+   "toddlerLockOn": {
+    "timestamp": 1789344738
+   },
+   "snoozeDuration": {
+    "timestamp": 1789344738
+   },
+   "current": {
+    "srId": {
+     "timestamp": 1789344745
+    },
+    "playing": {
+     "timestamp": 1789344745
+    },
+    "step": {
+     "timestamp": 1789344745
+    },
+    "color": {
+     "id": {
+      "timestamp": 1789344745
+     },
+     "r": {
+      "timestamp": 1789344745
+     },
+     "g": {
+      "timestamp": 1789344745
+     },
+     "b": {
+      "timestamp": 1789344745
+     },
+     "w": {
+      "timestamp": 1789344745
+     },
+     "i": {
+      "timestamp": 1789344745
+     },
+     "duration": {
+      "timestamp": 1789344745
+     },
+     "until": {
+      "timestamp": 1789344745
+     }
+    },
+    "sound": {
+     "id": {
+      "timestamp": 1789344745
+     },
+     "v": {
+      "timestamp": 1789344745
+     },
+     "mute": {
+      "timestamp": 1789344745
+     },
+     "url": {
+      "timestamp": 1789344745
+     },
+     "duration": {
+      "timestamp": 1789344745
+     },
+     "until": {
+      "timestamp": 1789344745
+     }
+    },
+    "paused": {
+     "timestamp": 1789344745
+    },
+    "apparentStartTime": {
+     "timestamp": 1789344745
+    },
+    "pausedAt": {
+     "timestamp": 1789344745
+    }
+   },
+   "dataVersion": {
+    "timestamp": 1789344738
+   },
+   "sleepScene": {
+    "srId": {
+     "timestamp": 1789344738
+    },
+    "enabled": {
+     "timestamp": 1789344738
+    }
+   },
+   "timer": {
+    "s": {
+     "timestamp": 1789344745
+    },
+    "d": {
+     "timestamp": 1789344745
+    }
+   },
+   "streaming": {
+    "status": {
+     "timestamp": 1789344738
+    }
+   },
+   "timezone": {
+    "timestamp": 1789344738
+   },
+   "rF": {
+    "v": {
+     "timestamp": 1789344738
+    },
+    "i": {
+     "timestamp": 1789344738
+    },
+    "u": {
+     "timestamp": 1789344738
+    }
+   },
+   "deviceInfo": {
+    "b": {
+     "timestamp": 1789344738
+    },
+    "f": {
+     "timestamp": 1789344738
+    },
+    "fR": {
+     "timestamp": 1789344738
+    },
+    "hwVersion": {
+     "timestamp": 1789344738
+    },
+    "powerStatus": {
+     "timestamp": 1789344738
+    },
+    "sdCardVersionInfo": {
+     "releaseDate": {
+      "timestamp": 1789344738
+     },
+     "hashType": {
+      "timestamp": 1789344738
+     },
+     "hashCode": {
+      "timestamp": 1789344738
+     }
+    }
+   },
+   "clock": {
+    "i": {
+     "timestamp": 1789344745
+    },
+    "turnOffAt": {
+     "timestamp": 1789344745
+    },
+    "turnOnAt": {
+     "timestamp": 1789344745
+    },
+    "flags": {
+     "timestamp": 1789344745
+    },
+    "turnOffMode": {
+     "timestamp": 1789344745
+    },
+    "turnDimAt": {
+     "timestamp": 1789344745
+    },
+    "turnBrightAt": {
+     "timestamp": 1789344745
+    }
+   },
+   "toddlerLock": {
+    "turnOffAt": {
+     "timestamp": 1789344745
+    },
+    "turnOnAt": {
+     "timestamp": 1789344745
+    },
+    "turnOnMode": {
+     "timestamp": 1789344745
+    }
+   },
+   "lucky": {
+    "timestamp": 1789344738
+   },
+   "LDR": {
+    "timestamp": 1789344738
+   },
+   "LWTP": {
+    "timestamp": 1789344745
+   },
+   "debug": {
+    "timestamp": 1788725766
+   },
+   "logging": {
+    "timestamp": 1789344745
+   },
+   "owned": {
+    "timestamp": 1789344738
+   },
+   "lastReset": {
+    "timestamp": 1789344738
+   },
+   "ota": {
+    "status": {
+     "timestamp": 1789344738
+    },
+    "downloadProgress": {
+     "timestamp": 1789344738
+    },
+    "installProgress": {
+     "timestamp": 1789344738
+    }
+   },
+   "REX": {
+    "lock": {
+     "timestamp": 1789344738
+    },
+    "key": {
+     "timestamp": 1789344738
+    },
+    "command": {
+     "timestamp": 1789344738
+    },
+    "auth": {
+     "timestamp": 1789344738
+    }
+   },
+   "connected": {
+    "timestamp": 1789344745
+   },
+   "rssi": {
+    "timestamp": 1789344745
+   },
+   "hwDebugFlags": {
+    "timestamp": 1788725766
+   },
+   "snooze": {
+    "active": {
+     "timestamp": 1789344738
+    },
+    "startTime": {
+     "timestamp": 1789344738
+    }
+   },
+   "touch": {
+    "flags": {
+     "timestamp": 1789344738
+    },
+    "poll_rate_hz": {
+     "timestamp": 1789344738
+    },
+    "refire_delay_ms": {
+     "timestamp": 1789344738
+    },
+    "refire_rate_hz": {
+     "timestamp": 1789344738
+    },
+    "step_size": {
+     "timestamp": 1789344738
+    }
+   },
+   "nightlightColor": {
+    "r": {
+     "timestamp": 1789344738
+    },
+    "g": {
+     "timestamp": 1789344738
+    },
+    "b": {
+     "timestamp": 1789344738
+    },
+    "w": {
+     "timestamp": 1789344738
+    },
+    "id": {
+     "timestamp": 1789344738
+    }
+   },
+   "deviceDistance": {
+    "timestamp": 1789344745
+   }
+  }
+ },
+ "version": 14022,
+ "timestamp": 1789349590
+}
