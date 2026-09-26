@@ -31,7 +31,7 @@ The custom-domain route creates its DNS record on first deploy.
 | `get_device` | Get raw reported shadow state for one device |
 | `list_favorites` | List favorites for a riot-family device |
 | `play_favorite` | Play a favorite by name or ID |
-| `update_favorite` | Edit an existing favorite's schedule and content |
+| `update_favorite` | Edit an existing favorite's schedule, content, and touch-button binding; verified by read-back |
 | `play_sound` | Play a catalog sound, optionally at a set volume |
 | `set_volume` | Set sound volume |
 | `set_light` | Set a named or custom RGB light color and brightness |
@@ -40,9 +40,15 @@ The custom-domain route creates its DNS record on first deploy.
 | `set_clock` | Control clock visibility and brightness on riot-family devices |
 | `set_toddler_lock` | Control toddler lock on riot-family devices |
 
-Write tools change a real device immediately. Confirm with the user before playing sounds or changing lights at night. Writes return the desired shadow payload without reading it back; call `list_devices` to confirm.
+Write tools change a real device immediately. Confirm with the user before playing sounds or changing lights at night. Device writes return the desired shadow payload without reading it back; call `list_devices` to confirm.
 
-`update_favorite` edits an existing favorite in the Hatch cloud; create new favorites in the Hatch app.
+`update_favorite` edits an existing favorite in the Hatch cloud the same way the Hatch app does: it posts the full favorite to `routine/v2/createOrEdit`, waits up to 20 s for the device shadow to report the new `dataVersion`, confirms it, then reads the favorite back from Hatch (bypassing the cache). If any field did not persist, it returns an error listing each one. Notes:
+
+- Hatch gives the favorite a **new id on every edit**. The result's `id` is the current one; `previous_id` is the old one.
+- `color` takes a catalog name, `#rrggbb`, or `off`.
+- `button: true|false` binds or unbinds the favorite from the touch button (button 0). Rest+ 2nd gen has only that one button, so button 1/2 are not supported. Several favorites may share it.
+- The device must be online. If it does not sync in time, the edit is left unconfirmed and the favorite is unchanged.
+- Create new favorites in the Hatch app.
 
 ## Supported models
 

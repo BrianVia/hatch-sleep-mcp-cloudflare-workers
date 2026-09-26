@@ -17,7 +17,7 @@ export type Favorite = {
   startTime?: string | null; daysOfWeek?: number; button0?: boolean; button1?: boolean; button2?: boolean; steps?: FavoriteStep[];
   endTime?: string | null; macAddress?: string;
 };
-export type FavoritePatch = { name?: string; enabled?: boolean; start_time?: string; days?: string[] | "every day" | "weekdays" | "weekends" | "none"; sound?: string | number; volume?: number; color?: string; brightness?: number; duration_minutes?: number };
+export type FavoritePatch = { button?: boolean; name?: string; enabled?: boolean; start_time?: string; days?: string[] | "every day" | "weekdays" | "weekends" | "none"; sound?: string | number; volume?: number; color?: string; brightness?: number; duration_minutes?: number };
 export type ContentItem = { id: number; title: string; contentType: string; red?: number; green?: number; blue?: number; white?: number; wavUrl?: string; mp3Url?: string };
 export type Color = { id: number; name: string; r: number; g: number; b: number; w: number };
 export type Sound = { id: number; name: string; url: string };
@@ -132,21 +132,33 @@ export function patchFavorite(routine: Favorite, patch: FavoritePatch, content: 
     next.startTime = `${routine.startTime?.slice(0, 10) ?? new Date().toISOString().slice(0, 10)} ${patch.start_time}:00`;
   }
   if (patch.days !== undefined) next.daysOfWeek = dayMask(patch.days);
+  if (patch.button !== undefined) next.button0 = patch.button;
   const sound = patch.sound === undefined ? undefined : findSound("riot", String(patch.sound), content);
   const color = patch.color === undefined ? undefined : parseColor(patch.color.toLowerCase() === "off" ? "No Color" : patch.color, content);
+  // A new sound or color drops the old contentfulId; the Hatch app omits it and sends only the numeric id.
   next.steps = (routine.steps ?? []).map((step) => ({
     ...step,
     sound: { ...step.sound,
-      ...(sound ? { id: sound.id, ignore: false } : {}),
+      ...(sound ? { id: sound.id, contentfulId: undefined, ignore: false } : {}),
       ...(patch.volume === undefined ? {} : { v: fromPercent(patch.volume) }),
       ...(patch.duration_minutes === undefined ? {} : patch.duration_minutes === 0 ? { until: "indefinite", duration: null } : { until: "duration", duration: patch.duration_minutes * 60 }),
     },
     color: { ...step.color,
-      ...(color ? { id: color.id, r: color.r, g: color.g, b: color.b, w: color.w, ignore: false } : {}),
+      ...(color ? { id: color.id, contentfulId: undefined, r: color.r, g: color.g, b: color.b, w: color.w, ignore: false } : {}),
       ...(patch.brightness === undefined ? {} : { i: fromPercent(patch.brightness) }),
     },
   }));
   return next;
+}
+
+type FavoriteSummary = ReturnType<typeof summarizeFavorite>;
+export function favoriteMismatches(expected: FavoriteSummary, actual: FavoriteSummary): string[] {
+  const fields = ({ id: _id, active: _active, steps, ...top }: FavoriteSummary) => new Map<string, unknown>([
+    ...Object.entries(top), ...steps.flatMap((step, index) => Object.entries(step).map(([key, value]) => [`steps[${index}].${key}`, value] as const)),
+  ]);
+  const want = fields(expected), got = fields(actual);
+  return [...want].filter(([key, value]) => JSON.stringify(value) !== JSON.stringify(got.get(key)))
+    .map(([key, value]) => `${key} (wanted ${JSON.stringify(value)}, got ${JSON.stringify(got.get(key))})`);
 }
 
 export const volumeDesired = (product: string, volume: number) => product === "restPlus" ? { a: { v: fromPercent(volume) } } : { current: { sound: { v: fromPercent(volume) } } };

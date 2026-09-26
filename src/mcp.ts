@@ -2,7 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { signHeaders } from "./aws.js";
 import { env } from "./env.js";
-import { RIOT_PRODUCTS, clockDesired, favoriteDesired, findSound, lightDesired, lightOffDesired, parseColor, patchFavorite, soundDesired, summarize, summarizeFavorite, toddlerLockDesired, turnOffDesired, volumeDesired, type Device, type Favorite } from "./hatch.js";
+import { RIOT_PRODUCTS, clockDesired, favoriteDesired, favoriteMismatches, findSound, lightDesired, lightOffDesired, parseColor, patchFavorite, soundDesired, summarize, summarizeFavorite, toddlerLockDesired, turnOffDesired, volumeDesired, type Device, type Favorite } from "./hatch.js";
 import { getShadows } from "./mqtt.js";
 import { presignMqttUrl } from "./aws.js";
 
@@ -38,6 +38,14 @@ async function reported(device: Device): Promise<Record<string, any>> {
   const doc = (await shadows([device]))[device.thingName];
   if (!doc?.state?.reported) throw new Error(`No shadow reported for ${device.name}`);
   return doc.state.reported;
+}
+
+// The Hatch app waits 15 s for the shadow to report the new dataVersion before confirming.
+async function deviceReports(device: Device, dataVersion: string) {
+  for (const deadline = Date.now() + 20_000; Date.now() < deadline; await new Promise((resolve) => setTimeout(resolve, 2_000))) {
+    if ((await reported(device)).dataVersion === dataVersion) return true;
+  }
+  return false;
 }
 
 async function publish(device: Device, desired: unknown, state: Record<string, any>) {
@@ -83,18 +91,29 @@ export async function createMcpServer(): Promise<McpServer> {
     return favoriteDesired(favoriteNamed(await owner().favorites(found.macAddress), favorite).id);
   })));
 
-  server.tool("update_favorite", "Edit an existing favorite's schedule/content in the Hatch cloud; the device syncs it. Sound, color, volume, brightness, and duration apply to every step. Create new favorites in the Hatch app.", {
+  server.tool("update_favorite", "Edit an existing favorite's schedule/content in the Hatch cloud. Waits for the device to sync, reads the favorite back from Hatch, and errors listing any field that did not persist. Hatch gives the favorite a NEW id on every edit; the result's id is current and previous_id is the old one. Sound, color (catalog name, #rrggbb, or off), volume, brightness, and duration apply to every step. button binds the favorite to the device's touch button (button 0) or unbinds it; Rest+ 2nd gen has only that one button, so button 1/2 are not supported, and several favorites may share it. The device must be online. Create new favorites in the Hatch app.", {
     device: deviceArg, favorite: z.union([z.string().min(1), z.number().int()]), name: z.string().min(1).optional(), enabled: z.boolean().optional(),
     start_time: z.string().regex(/^(?:[01]\d|2[0-3]):[0-5]\d$/).optional(),
     days: z.union([z.array(z.enum(["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"])), z.enum(["every day", "weekdays", "weekends", "none"])]).optional(),
     sound: z.union([z.string().min(1), z.number().int()]).optional(), volume: z.number().min(0).max(100).optional(),
-    color: z.string().min(1).optional(), brightness: z.number().min(1).max(100).optional(), duration_minutes: z.number().min(0).optional(),
+    color: z.string().min(1).describe("Catalog color name, #rrggbb, or off").optional(), brightness: z.number().min(1).max(100).optional(), duration_minutes: z.number().min(0).optional(),
+    button: z.boolean().describe("true binds to the touch button (button 0); false unbinds").optional(),
   }, ({ device, favorite, ...patch }) => run(async () => {
     if (Object.values(patch).every((value) => value === undefined)) throw new Error("At least one patch field is required.");
     const found = await deviceNamed(device, true); if (!riot(found)) throw new Error(`${found.name} does not support favorites (product ${found.product})`);
-    const [favorites, content] = await Promise.all([owner().favorites(found.macAddress), owner().content()]);
-    const updated = await owner().editRoutine(found.macAddress, patchFavorite(favoriteNamed(favorites, favorite), patch, content));
-    return summarizeFavorite(updated, content);
+    const [favorites, content] = await Promise.all([owner().favorites(found.macAddress, true), owner().content()]);
+    const current = favoriteNamed(favorites, favorite), expected = patchFavorite(current, patch, content);
+    const saved = await owner().createOrEditRoutine(found.macAddress, expected);
+    if (saved.confirmDataVersion) {
+      if (!saved.dataVersion) throw new Error("Hatch asked to confirm the edit without a data version.");
+      if (!await deviceReports(found, saved.dataVersion)) throw new Error(`${found.name} did not sync the edit within 20 s (offline?). Hatch left it unconfirmed, so favorite ${current.id} is unchanged.`);
+      await owner().confirmDataVersion(found.macAddress, saved.dataVersion);
+    }
+    const id = saved.item?.id ?? current.id, actual = (await owner().favorites(found.macAddress, true)).find((item) => item.id === id && item.active);
+    if (!actual) throw new Error(`Favorite ${id} is missing after the edit; call list_favorites.`);
+    const summary = summarizeFavorite(actual, content), mismatches = favoriteMismatches(summarizeFavorite(expected, content), summary);
+    if (mismatches.length) throw new Error(`Hatch accepted the edit but these fields did not persist: ${mismatches.join("; ")}. Current favorite: ${JSON.stringify(summary)}`);
+    return { ...summary, ...(id === current.id ? {} : { previous_id: current.id }) };
   }));
 
   server.tool("play_sound", "Play a catalog sound." + changed, { device: deviceArg, sound: z.union([z.string().min(1), z.number().int()]), volume: z.number().min(0).max(100).optional() }, ({ device, sound, volume }) => run(() => write(device, async (found) => soundDesired(found.product, findSound(found.product, String(sound), riot(found) ? await owner().content() : []), volume))));

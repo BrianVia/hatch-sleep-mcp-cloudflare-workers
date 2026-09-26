@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { describe, test } from "node:test";
 import { CONNECT, PUBLISH, decode, parsePublish } from "../src/mqtt.ts";
 import { presignMqttUrl } from "../src/aws.ts";
-import { clockDesired, fromByte, fromPercent, lightDesired, lightOffDesired, parseColor, patchFavorite, soundDesired, summarize, summarizeFavorite, toByte, toPercent } from "../src/hatch.ts";
+import { clockDesired, favoriteMismatches, fromByte, fromPercent, lightDesired, lightOffDesired, parseColor, patchFavorite, soundDesired, summarize, summarizeFavorite, toByte, toPercent } from "../src/hatch.ts";
 
 const fixture = async (name) => JSON.parse(await readFile(new URL(`fixtures/${name}`, import.meta.url), "utf8"));
 const favorite = {
@@ -56,6 +56,22 @@ describe("Hatch state conversion", () => {
     assert.equal(patched.daysOfWeek, 10);
     assert.deepEqual(patched.steps[0].sound, { id: 10138, v: 32768, duration: null, until: "indefinite", ignore: false });
     assert.equal(favorite.startTime, "2025-04-09 19:30:00");
+  });
+
+  test("patches hex color, sound, and button, dropping stale contentfulIds", () => {
+    const noColor = { ...favorite, button0: false, steps: [{ ...favorite.steps[0], sound: { ...favorite.steps[0].sound, id: 10139, contentfulId: "rain" }, color: { id: 9998, contentfulId: "none", r: 0, g: 0, b: 0, w: 0, i: 0, ignore: false } }] };
+    const patched = patchFavorite(noColor, { color: "#FF7600", brightness: 10, sound: "Ocean", volume: 35, button: true });
+    assert.equal(patched.button0, true);
+    assert.deepEqual(patched.steps[0].color, { id: 9999, contentfulId: undefined, r: 65535, g: 30326, b: 0, w: 0, i: 6554, ignore: false });
+    assert.equal(JSON.stringify(patched.steps[0].sound).includes("contentfulId"), false);
+    assert.deepEqual(summarizeFavorite(patched).steps[0], { name: "Sleep", sound: "Ocean", volume: 35, color: "custom", rgb: "#ff7600", brightness: 10, duration_minutes: 30, until: "duration" });
+    assert.deepEqual(summarizeFavorite(patched).buttons, [0, 2]);
+  });
+
+  test("lists favorite fields that did not persist", () => {
+    const expected = summarizeFavorite(patchFavorite(favorite, { volume: 35, color: "#ff7600" }));
+    assert.deepEqual(favoriteMismatches(expected, { ...summarizeFavorite(favorite), id: 99 }), ['steps[0].volume (wanted 35, got 16)']);
+    assert.deepEqual(favoriteMismatches(expected, { ...expected, id: 99, active: false }), []);
   });
 });
 

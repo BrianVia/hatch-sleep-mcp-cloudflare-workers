@@ -26,28 +26,27 @@ export class HatchSession extends DurableObject<Env> {
     return value;
   }
 
-  async favorites(mac: string): Promise<Favorite[]> {
+  async favorites(mac: string, fresh = false): Promise<Favorite[]> {
     const key = `favorites:${mac}`, cached = await this.ctx.storage.get<Cached<Favorite[]>>(key);
-    if (cached && cached.expiresAt > Date.now()) return cached.value;
+    if (!fresh && cached && cached.expiresAt > Date.now()) return cached.value;
     const value = (await this.request<Favorite[]>(`service/app/routine/v2/fetch?macAddress=${encodeURIComponent(mac)}`)).sort((a, b) => (a.displayOrder ?? Infinity) - (b.displayOrder ?? Infinity));
     await this.ctx.storage.put(key, { value, expiresAt: Date.now() + 10 * 60_000 });
     return value;
   }
 
-  async editRoutine(mac: string, routine: Favorite): Promise<Favorite> {
-    const payload = await this.request<{ confirmDataVersion?: boolean; dataVersion?: string; item?: Favorite[] }>("service/app/routine/v2/editMultiple", {
-      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mrds: [routine], type: routine.type }),
-    });
+  // Same call the Hatch app makes. Hatch saves an inactive copy under a new id; it replaces the
+  // original only after the device reports dataVersion and we confirm it (confirmDataVersion).
+  // editMultiple is not an alternative: it only carries routine-level fields and silently drops steps.
+  async createOrEditRoutine(mac: string, routine: Favorite): Promise<{ confirmDataVersion?: boolean; dataVersion?: string; item?: Favorite }> {
     await this.ctx.storage.delete(`favorites:${mac}`);
-    if (payload.confirmDataVersion) {
-      if (!payload.dataVersion) throw new Error("Hatch edit requested confirmation without a data version.");
-      await this.request("service/app/v2/dataVersion", {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ dataVersion: payload.dataVersion, macAddress: mac, success: true, returnAllRoutines: true }),
-      });
-    }
-    const updated = payload.item?.find((item) => item.id === routine.id) ?? (await this.favorites(mac)).find((item) => item.id === routine.id);
-    if (!updated) throw new Error(`Favorite ${routine.id} disappeared after editing.`);
-    return updated;
+    return this.request("service/app/routine/v2/createOrEdit", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(routine) });
+  }
+
+  async confirmDataVersion(mac: string, dataVersion: string): Promise<void> {
+    await this.ctx.storage.delete(`favorites:${mac}`);
+    await this.request("service/app/v2/dataVersion", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ dataVersion, macAddress: mac, success: true, returnAllRoutines: true }),
+    });
   }
 
   async content(): Promise<ContentItem[]> {
